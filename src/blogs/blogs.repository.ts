@@ -3,6 +3,7 @@ import { BlogsExtendedType } from "../types/blogs.type";
 import { InjectModel } from "@nestjs/mongoose";
 import { Blogs, BlogsDocument } from "../schemas/blogs.schema";
 import { FilterQuery, Model } from "mongoose";
+import { UpdateBlogsDto } from "./dto/update.blogs.dto";
 
 @Injectable()
 export class BlogsRepository {
@@ -24,12 +25,30 @@ export class BlogsRepository {
       page: pageNumber,
       pageSize,
       totalCount: blogsCount,
-      items: blogs,
-    }
+      items: blogs
+    };
+    //@ts-ignore
     return result;
   };
 
-  async findOne(blogsFilterQuery: FilterQuery<Blogs>) {
+  async findOne(blogsFilterQuery: FilterQuery<Blogs>): Promise<Blogs> {
     return this.blogsModel.findOne(blogsFilterQuery);
+  };
+
+  async find(blogsFilterQuery: FilterQuery<Blogs>): Promise<Blogs[]> {
+    return this.blogsModel.find(blogsFilterQuery);
+  };
+
+  async create(blogs: Blogs): Promise<Blogs> {
+    const newBlogs = new this.blogsModel(blogs);
+    return newBlogs.save()
   }
+
+  async findOneAndUpdate(blogsFilterQuery: FilterQuery<Blogs>, blogsUpdates: UpdateBlogsDto): Promise<Blogs> {
+    return this.blogsModel.findOneAndUpdate(blogsFilterQuery, blogsUpdates)
   }
+
+  async findOneAndDelete(blogsFilterQuery: FilterQuery<Blogs>): Promise<Blogs> {
+    return this.blogsModel.findOneAndDelete(blogsFilterQuery);
+  }
+}

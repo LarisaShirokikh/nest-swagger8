@@ -1,33 +1,24 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-  DefaultValuePipe,
-  ParseIntPipe
+  Controller, Get, Post, Body, Patch, Param, Delete, Query
 } from "@nestjs/common";
 import { BlogsService } from "./blogs.service";
-import { CreateBlogsDto } from "./dto/create-blogs.dto";
-import { UpdateBloggerDto } from "./dto/update-blogger.dto";
-import { query } from "express";
-import { BlogsType } from "../types/blogs.type";
+import { UpdateBlogsDto } from "./dto/update.blogs.dto";
+import { Blogs } from "../schemas/blogs.schema";
+import { CreateBlogsDto } from "./dto/create.blogs.dto";
+
 
 
 @Controller("blogs")
 export class BlogsController {
   constructor(
-    private readonly bloggersService: BlogsService
+    private readonly blogsService: BlogsService
   ) {
   }
 
   @Post()
   async create(
-    @Body() inputModel: BlogsType ) {
-    return await this.bloggersService.create(inputModel)
+    @Body() createBlogsDto: CreateBlogsDto ) {
+    return await this.blogsService.create(createBlogsDto.name, createBlogsDto.youtubeUrl)
 };
 
 
@@ -38,29 +29,31 @@ export class BlogsController {
     pageSize: string;
     sortBy: string;
     sortDirection: string
-  }) {
-    const bloggers = await this.bloggersService.getAllUsers(
+  }): Promise<Blogs[]> {
+    const blogs = await this.blogsService.getAllBlogs(
       query.searchNameTerm,
       query.pageNumber,
       query.pageSize,
       query.sortBy,
       query.sortDirection
     );
-    return bloggers;
+    //@ts-ignore
+    return blogs;
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.bloggersService.findOne(id);
+  @Get(":blogsId")
+  findOne(@Param("blogsId") blogsId: string): Promise<Blogs> {
+    return this.blogsService.getBlogsById(blogsId);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateBloggerDto: UpdateBloggerDto) {
-    return this.bloggersService.update(id, updateBloggerDto);
+  @Patch(":blogsId")
+  update(@Param("blogsId") blogsId: string, @Body() updateBloggerDto: UpdateBlogsDto): Promise<Blogs> {
+    return this.blogsService.updateBlogs(blogsId, updateBloggerDto);
+
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.bloggersService.remove(+id);
+  @Delete(":blogsId")
+  remove(@Param("blogsId") blogsId: string) {
+    return this.blogsService.remove(blogsId);
   }
 }

@@ -1,50 +1,45 @@
-import { Body, Injectable, Param } from "@nestjs/common";
-import { UpdateBloggerDto } from "./dto/update-blogger.dto";
-import { BlogsDocument, BlogsSchema } from "../schemas/blogs.schema";
-import { BlogsExtendedType, BlogsType } from "../types/blogs.type";
+import { Injectable } from "@nestjs/common";
+import { UpdateBlogsDto } from "./dto/update.blogs.dto";
+import { Blogs } from "../schemas/blogs.schema";
+import { BlogsExtendedType } from "../types/blogs.type";
 import { BlogsRepository } from "./blogs.repository";
+import { v4 as uuidv4 } from 'uuid'
 
 @Injectable()
 export class BlogsService {
   constructor(
-    protected bloggersRepository: BlogsRepository,
-    protected blogsModel: BlogsRepository
+    private readonly blogsRepository: BlogsRepository
   ) {}
 
-  // async paginate(options: IPaginationOptions): Promise<Pagination<Blogger>> {
-  //   const queryBuilder = this.repository.createQueryBuilder('c');
-  //   queryBuilder.orderBy('c.name', 'DESC');
-  //
-  //   return
-  //   //paginate<Blogger>(queryBuilder, options);
-  // }
 
-  async create(@Body() inputModel: BlogsType): Promise<BlogsType> {
-    const createdBlogger = new this.blogsModel(BlogsSchema);
-    await createdBlogger.save();
-    const blogger = await this.blogsModel.findOne({id: createdBlogger.id}, {_id: 0, __v: 0})
-    return blogger
+  async create(name: string, youtubeUrl: string): Promise<Blogs> {
+    return await this.blogsRepository.create({
+      id: uuidv4(),
+      name,
+      youtubeUrl,
+      createdAt: (new Date()).toString()
+    })
   }
 
 
-  findOne(id: string) {
-    return `This action returns a #${id} blogger`;
+  async getBlogsById(blogsId: string): Promise<Blogs> {
+    return this.blogsRepository.findOne({blogsId});
   }
 
-  update(id: string, updateBloggerDto: UpdateBloggerDto) {
-    return `This action updates a #${id} blogger`;
+  async updateBlogs(blogsId: string, blogsUpdates: UpdateBlogsDto): Promise<Blogs> {
+    return this.blogsRepository.findOneAndUpdate({ blogsId }, blogsUpdates);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} blogger`;
+  async remove(blogsId: string): Promise<Blogs> {
+    return this.blogsRepository.findOneAndDelete({ blogsId });
   }
 
 
-  async getAllUsers(searchNameTerm: string = null || undefined,
+  async getAllBlogs(searchNameTerm: string = null || undefined,
                     pageNumber: string = '1' || undefined,
                     pageSize: string = '10' || undefined,
                     sortBy: string = 'createdAt' || undefined,
-                    sortDirection: string = 'desc' || undefined ): Promise<BloggersExtendedType> {
-    return this.bloggersRepository.getAllBloggers(searchNameTerm, +pageNumber, +pageSize, sortBy, sortDirection);
+                    sortDirection: string = 'desc' || undefined ): Promise<BlogsExtendedType> {
+    return this.blogsRepository.getAllBloggers(searchNameTerm, +pageNumber, +pageSize, sortBy, sortDirection);
   }
 }
