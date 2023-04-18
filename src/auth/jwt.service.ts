@@ -1,0 +1,54 @@
+import jwt from 'jsonwebtoken'
+import { Injectable } from "@nestjs/common";
+
+@Injectable()
+export class jwtService  {
+
+  async createJWT(user: any) {
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || '123', { expiresIn: '10h' })
+    return token
+  }
+
+  async getUserIdByToken (token: string){
+    try{
+      const result:any =  await jwt.verify(token, process.env.JWT_SECRET || '123')
+      return result.userId
+    } catch (error) {
+      return null
+    }
+  }
+
+  async userIdByToken (token: string) {
+    try {
+      const result: any = jwt.verify(token, process.env.JWT_SECRET || '123')
+      return result.userId
+    } catch (error) {
+      return null
+    }
+  }
+
+  async createJWTPair(user: any) {
+    const accessToken = jwt
+      .sign({userId: user.accountData.id},
+        process.env.JWT_SECRET || '123', {expiresIn: '3h'})
+    const refreshToken = jwt
+      .sign({userId: user.accountData.id},
+        process.env.JWT_SECRET || '123', {expiresIn: '5h'})
+    const jwtTokenPair = {accessToken, refreshToken}
+    return jwtTokenPair
+  }
+
+  async getTokenTime(token: string) {
+    try{
+      const result: any = await jwt.verify(token, process.env.JWT_SECRET || '123')
+      if(result) {
+        return result.exp
+      } else {
+        return false
+      }
+    }
+    catch (error){
+      return false
+    }
+  }
+}

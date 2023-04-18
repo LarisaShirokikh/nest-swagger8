@@ -31,9 +31,9 @@ export class BlogsRepository {
     return result;
   };
 
-  async findOne(blogsFilterQuery: FilterQuery<Blogs>): Promise<Blogs> {
-    return this.blogsModel.findOne(blogsFilterQuery);
-  };
+  async findOne(blogId: string): Promise<BlogsDocument> {
+    return this.blogsModel.findOne({ blogId });
+  }
 
   async find(blogsFilterQuery: FilterQuery<Blogs>): Promise<Blogs[]> {
     return this.blogsModel.find(blogsFilterQuery);
@@ -49,6 +49,6 @@ export class BlogsRepository {
   }
 
   async findOneAndDelete(blogsFilterQuery: FilterQuery<Blogs>): Promise<Blogs> {
-    return this.blogsModel.findOneAndDelete(blogsFilterQuery);
+    return this.blogsModel.findOneAndDelete( blogsFilterQuery );
   }
 }

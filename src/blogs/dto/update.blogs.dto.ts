@@ -1,6 +1,5 @@
+import { CreateBlogsDto } from "./create.blogs.dto";
 
 
-export class UpdateBlogsDto {
-  readonly name: string
-  readonly youtubeUrl: string;
+export class UpdateBlogsDto extends CreateBlogsDto{
 }

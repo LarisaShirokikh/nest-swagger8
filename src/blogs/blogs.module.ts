@@ -6,8 +6,11 @@ import { Blogs, BlogsSchema } from "../schemas/blogs.schema";
 import { BlogsRepository } from "./blogs.repository";
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Blogs.name, schema: BlogsSchema }])],
+  imports: [MongooseModule
+    .forFeature([{ name: Blogs.name, schema: BlogsSchema }])],
+
   controllers: [BlogsController],
-  providers: [BlogsService, BlogsRepository]
+  providers: [BlogsService, BlogsRepository],
+  exports: [BlogsService, BlogsRepository]
 })
 export class BlogsModule {}

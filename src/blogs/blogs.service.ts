@@ -12,7 +12,7 @@ export class BlogsService {
   ) {}
 
 
-  async create(name: string, youtubeUrl: string): Promise<Blogs> {
+  async createBlog(name: string, youtubeUrl: string): Promise<Blogs> {
     return await this.blogsRepository.create({
       id: uuidv4(),
       name,
@@ -23,7 +23,8 @@ export class BlogsService {
 
 
   async getBlogsById(blogsId: string): Promise<Blogs> {
-    return this.blogsRepository.findOne({blogsId});
+    //@ts-ignore
+    return this.blogsRepository.findOne({ blogsId });
   }
 
   async updateBlogs(blogsId: string, blogsUpdates: UpdateBlogsDto): Promise<Blogs> {

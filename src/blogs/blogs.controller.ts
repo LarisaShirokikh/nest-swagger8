@@ -17,9 +17,9 @@ export class BlogsController {
 
 
   @Post()
-  async create(
-    @Body() createBlogsDto: CreateBlogsDto ) {
-    return await this.blogsService.create(createBlogsDto.name, createBlogsDto.youtubeUrl)
+  async createBlog(
+    @Body() createBlogsDto: CreateBlogsDto ): Promise<Blogs> {
+    return await this.blogsService.createBlog(createBlogsDto.name, createBlogsDto.youtubeUrl)
 };
 
 
